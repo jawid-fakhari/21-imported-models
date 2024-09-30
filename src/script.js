@@ -51,8 +51,20 @@ const dracoLoader = new DRACOLoader(); //init draco loader
 dracoLoader.setDecoderPath("/draco/"); //abbiamo bisogno del deraco folder, allora per semplificare il lavoro andiamo a copiare il folder da questo path 'node_modules/three/examples/jsm/libs/draco' e lo mettiamo nel static folder
 
 gltfLoader.setDRACOLoader(dracoLoader); //settare al gltfLoader il dracoLoader
-
 gltfLoader.load("/models/Duck/glTF-Draco/Duck.gltf", (gltf) => {
+  // scene.add(gltf.scene);
+});
+
+//******Scaling, Animation
+let mixer = null; //per scoping lo dichiaramo fuori che poi viene chiamato dentro tick function
+
+gltfLoader.load("/models/Fox/glTF/Fox.gltf", (gltf) => {
+  mixer = new THREE.AnimationMixer(gltf.scene);
+  const action = mixer.clipAction(gltf.animations[0]); //cambia index per altri animazioni
+
+  action.play();
+
+  gltf.scene.scale.set(0.025, 0.025, 0.025);
   scene.add(gltf.scene);
 });
 
@@ -149,6 +161,11 @@ const tick = () => {
   const elapsedTime = clock.getElapsedTime();
   const deltaTime = elapsedTime - previousTime;
   previousTime = elapsedTime;
+
+  // Update Mixer
+  if (mixer !== null) {
+    mixer.update(deltaTime);
+  }
 
   // Update controls
   controls.update();
