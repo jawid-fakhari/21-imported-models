@@ -20,7 +20,28 @@ const scene = new THREE.Scene();
  */
 //GLTF loader
 const gltfLoader = new GLTFLoader();
-console.log(gltfLoader);
+
+//importare il modello, poi trovare i mesh dal scene object
+gltfLoader.load("/models/FlightHelmet/glTF/FlightHelmet.gltf", (gltf) => {
+  //usando il for loop non riusciamo ad avere accessibilità su tutti pezzi del oggetto
+  //   for (const children of gltf.scene.children) {
+  //     scene.add(children);
+  //   }
+
+  //possiamo usare il while loop, ma non è sicuro, sempre dobbiamo essere attenti sul infinite loop
+  //   while (gltf.scene.children.length) {
+  //     scene.add(gltf.scene.children[0]);
+  //   }
+
+  //possiamo usare spread operator per creare un array spearato poi usare il loop per renderizzare
+  //   const childrens = [...gltf.scene.children];
+  //   for (const children of childrens) {
+  //     scene.add(children);
+  //   }
+
+  //Miglior metodo per loading è usare l'oggetto scene, perchè è un gruppo e basta aggiugere il gruppo alla scene
+  scene.add(gltf.scene);
+});
 
 /**
  * Floor
