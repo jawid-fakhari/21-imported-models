@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader } from "three/examples/jsm/Addons.js";
+import { DRACOLoader, GLTFLoader } from "three/examples/jsm/Addons.js";
 import GUI from "lil-gui";
 
-/**
+/*********************************************
  * Base
  */
 // Debug
@@ -15,35 +15,47 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
-/**
+/*********************************************
  * Models
  */
 //GLTF loader
 const gltfLoader = new GLTFLoader();
 
-//importare il modello, poi trovare i mesh dal scene object
-gltfLoader.load("/models/FlightHelmet/glTF/FlightHelmet.gltf", (gltf) => {
-  //usando il for loop non riusciamo ad avere accessibilità su tutti pezzi del oggetto
-  //   for (const children of gltf.scene.children) {
-  //     scene.add(children);
-  //   }
+//**********come importare il modello
+// gltfLoader.load("/models/FlightHelmet/glTF/FlightHelmet.gltf", (gltf) => {
+//   //usando il for loop non riusciamo ad avere accessibilità su tutti pezzi del oggetto
+//   //   for (const children of gltf.scene.children) {
+//   //     scene.add(children);
+//   //   }
 
-  //possiamo usare il while loop, ma non è sicuro, sempre dobbiamo essere attenti sul infinite loop
-  //   while (gltf.scene.children.length) {
-  //     scene.add(gltf.scene.children[0]);
-  //   }
+//   //possiamo usare il while loop, ma non è sicuro, sempre dobbiamo essere attenti sul infinite loop
+//   //   while (gltf.scene.children.length) {
+//   //     scene.add(gltf.scene.children[0]);
+//   //   }
 
-  //possiamo usare spread operator per creare un array spearato poi usare il loop per renderizzare
-  //   const childrens = [...gltf.scene.children];
-  //   for (const children of childrens) {
-  //     scene.add(children);
-  //   }
+//   //possiamo usare spread operator per creare un array spearato poi usare il loop per renderizzare
+//   //   const childrens = [...gltf.scene.children];
+//   //   for (const children of childrens) {
+//   //     scene.add(children);
+//   //   }
 
-  //Miglior metodo per loading è usare l'oggetto scene, perchè è un gruppo e basta aggiugere il gruppo alla scene
+//   //Miglior metodo per loading è usare l'oggetto scene, perchè è un gruppo e basta aggiugere il gruppo alla scene
+//   scene.add(gltf.scene);
+// });
+
+//**********importare il modello Draco compressed file, "import DRACOLoader instance" questo file è più leggero perché viene applicato sul webassembly e usa un wroker space separato sul cpu
+
+const dracoLoader = new DRACOLoader(); //init draco loader
+
+dracoLoader.setDecoderPath("/draco/"); //abbiamo bisogno del deraco folder, allora per semplificare il lavoro andiamo a copiare il folder da questo path 'node_modules/three/examples/jsm/libs/draco' e lo mettiamo nel static folder
+
+gltfLoader.setDRACOLoader(dracoLoader); //settare al gltfLoader il dracoLoader
+
+gltfLoader.load("/models/Duck/glTF-Draco/Duck.gltf", (gltf) => {
   scene.add(gltf.scene);
 });
 
-/**
+/*********************************************
  * Floor
  */
 const floor = new THREE.Mesh(
@@ -58,7 +70,7 @@ floor.receiveShadow = true;
 floor.rotation.x = -Math.PI * 0.5;
 scene.add(floor);
 
-/**
+/*********************************************
  * Lights
  */
 const ambientLight = new THREE.AmbientLight(0xffffff, 2.4);
@@ -75,7 +87,7 @@ directionalLight.shadow.camera.bottom = -7;
 directionalLight.position.set(5, 5, 5);
 scene.add(directionalLight);
 
-/**
+/*********************************************
  * Sizes
  */
 const sizes = {
@@ -97,7 +109,7 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-/**
+/*********************************************
  * Camera
  */
 // Base camera
@@ -115,7 +127,7 @@ const controls = new OrbitControls(camera, canvas);
 controls.target.set(0, 0.75, 0);
 controls.enableDamping = true;
 
-/**
+/*********************************************
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
@@ -126,7 +138,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-/**
+/*********************************************
  * Animate
  */
 const clock = new THREE.Clock();
