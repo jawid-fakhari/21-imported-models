@@ -43,7 +43,8 @@ const gltfLoader = new GLTFLoader();
 //   scene.add(gltf.scene);
 // });
 
-//**********importare il modello Draco compressed file, "import DRACOLoader instance" questo file è più leggero perché viene applicato sul webassembly e usa un wroker space separato sul cpu
+//**********importare il modello DRACO compressed file, "import DRACOLoader instance" questo file è più leggero perché viene applicato sul webassembly e usa un wroker space separato sul cpu
+//** quando usare DRACO loader? qando abbaimo una geometria più grande, perché il loader stesso pesa qualcosa quando lo importiamo. inoltre abbiamo un momento di freezing per uncompressing della geometria, quindi dipende dalla situazione
 
 const dracoLoader = new DRACOLoader(); //init draco loader
 
