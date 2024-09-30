@@ -8,6 +8,12 @@ import GUI from "lil-gui";
  */
 // Debug
 const gui = new GUI();
+const debugObject = {};
+
+let counter = 0;
+debugObject.nextAnimation = () => {
+  counter < 2 ? counter++ : (counter = 0);
+};
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -57,17 +63,23 @@ gltfLoader.load("/models/Duck/glTF-Draco/Duck.gltf", (gltf) => {
 
 //******Scaling, Animation
 let mixer = null; //per scoping lo dichiaramo fuori che poi viene chiamato dentro tick function
+const mixerClipAction = () => {
+  if (counter !== null) {
+    scene.remove(scene.children[4]);
+  }
+  gltfLoader.load("/models/Fox/glTF/Fox.gltf", (gltf) => {
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    const action = mixer.clipAction(gltf.animations[counter]); //cambia index per altri animazioni
 
-gltfLoader.load("/models/Fox/glTF/Fox.gltf", (gltf) => {
-  mixer = new THREE.AnimationMixer(gltf.scene);
-  const action = mixer.clipAction(gltf.animations[0]); //cambia index per altri animazioni
+    action.play();
 
-  action.play();
+    gltf.scene.scale.set(0.025, 0.025, 0.025);
+    scene.add(gltf.scene);
+  });
+};
 
-  gltf.scene.scale.set(0.025, 0.025, 0.025);
-  scene.add(gltf.scene);
-});
-
+mixerClipAction();
+gui.add(debugObject, "nextAnimation").onChange(mixerClipAction);
 /*********************************************
  * Floor
  */
