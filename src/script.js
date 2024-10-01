@@ -63,18 +63,28 @@ gltfLoader.load("/models/Duck/glTF-Draco/Duck.gltf", (gltf) => {
 
 //******Scaling, Animation
 let mixer = null; //per scoping lo dichiaramo fuori che poi viene chiamato dentro tick function
+let fox = null;
+
 const mixerClipAction = () => {
   if (counter !== null) {
-    scene.remove(scene.children[4]);
+    scene.remove(fox);
   }
   gltfLoader.load("/models/Fox/glTF/Fox.gltf", (gltf) => {
-    mixer = new THREE.AnimationMixer(gltf.scene);
+    fox = gltf.scene;
+    mixer = new THREE.AnimationMixer(fox);
     const action = mixer.clipAction(gltf.animations[counter]); //cambia index per altri animazioni
 
     action.play();
+    fox.name = "fox";
+    fox.scale.set(0.025, 0.025, 0.025);
+    scene.add(fox);
 
-    gltf.scene.scale.set(0.025, 0.025, 0.025);
-    scene.add(gltf.scene);
+    // console.log(
+    //   scene.children.findIndex((x) => {
+    //     return x.name === "fox";
+    //   })
+    // );
+    // console.log(scene.children.find((x) => x.name === "fox"));
   });
 };
 
