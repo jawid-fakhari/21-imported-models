@@ -63,7 +63,7 @@ gltfLoader.load("/models/Duck/glTF-Draco/Duck.gltf", (gltf) => {
 
 //******Scaling, Animation
 let mixer = null; //per scoping lo dichiaramo fuori che poi viene chiamato dentro tick function
-let fox = null;
+let fox = null; //variabile che prende in se il gltf.scene, quindi abbiamo accesso all'oggetto del modello
 
 const mixerClipAction = () => {
   if (counter !== null) {
